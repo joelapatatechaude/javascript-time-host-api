@@ -6,7 +6,7 @@ document.getElementById('fetchButton').addEventListener('click', () => {
             const dateTime = new Date(data.dateTime);
             const formattedTime = dateTime.toLocaleTimeString();
             const hostname = data.hostname;
-            document.getElementById('result').innerText = `Time: ${formattedTime}, Hostname: ${hostname}`;
+            document.getElementById('result').innerText = `${formattedTime} - ${hostname}`;
         })
         .catch(error => {
             console.error('Error fetching data:', error);
@@ -23,7 +23,7 @@ document.getElementById('fetchHistoryButton').addEventListener('click', () => {
             data.slice(0, 100).forEach(item => {
                 const dateTime = new Date(item.dateTime);
                 const formattedTime = dateTime.toLocaleTimeString();
-                historyHTML += `<li>Time: ${formattedTime}, Hostname: ${item.hostname}</li>`;
+                historyHTML += `<li>${formattedTime} - ${item.hostname}</li>`;
             });
             historyHTML += '</ul>';
             document.getElementById('historyResult').innerHTML = historyHTML;
