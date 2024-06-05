@@ -1,4 +1,4 @@
-const API_ENDPOINT = 'http://localhost:8080';
+const API_ENDPOINT = 'http://java-time-host-api:8080';
 
 
 document.getElementById('fetchButton').addEventListener('click', () => {
