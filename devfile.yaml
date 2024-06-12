@@ -1,0 +1,87 @@
+schemaVersion: 2.2.2
+metadata:
+  name: javascript-app
+
+components:
+  - name: webserver
+    container:
+      image: registry.redhat.io/devspaces/udi-rhel8:3.14
+      memoryLimit: 1024Mi
+      mountSources: true
+      endpoints:
+        - name: https
+          protocol: https
+          targetPort: 8000
+          exposure: public
+          path: /
+      env:
+        - name: SERVE_DIRECTORY
+          value: /projects/javascript-time-host-api
+  - name: mssql
+    container:
+      image: quay.io/rh_ee_cschmitz/mssql:latest
+      env:
+        - name: ACCEPT_EULA
+          value: Y
+        - name: MSSQL_SA_PASSWORD
+          value: IloveOpenShift4
+        - name: MSSQL_PID
+          value: 'Developer'
+      endpoints:
+        - name: mssql
+          exposure: none
+          targetPort: 1433
+        - name: mssql-udp
+          exposure: none
+          targetPort: 1434
+        - name: rgtp
+          exposure: none
+          targetPort: 1431
+      memoryLimit: '3Gi'
+      memoryRequest: '2Gi'
+      cpuLimit: '1'
+      cpuRequest: '0.25'
+      mountSources: false
+      volumeMounts:
+        - name: mssql-storage
+          path: /var/opt/mssql/data
+  - name: mssql-storage
+    volume:
+      size: 1G
+
+
+  - name: api
+    container:
+      image: quay.io/rh_ee_cschmitz/dotnet-time-host-api:latest
+      env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Development
+      endpoints:
+        - exposure: public
+          name: 'time-endpoint'
+          protocol: https
+          path: /api/time
+          targetPort: 8080
+      memoryLimit: '1Gi'
+      memoryRequest: '500Mi'
+      cpuLimit: '0.5'
+      cpuRequest: '0.025'
+      mountSources: false
+
+commands:
+  - id: serve
+    exec:
+      label: Start python http server
+      component: webserver
+      commandLine: "python -m http.server -d ${SERVE_DIRECTORY} 8000"
+      workingDir: /projects/javascript-time-host-api
+      group:
+        kind: run
+  - id: truncate-time-table
+    exec:
+      label: Truncate time table
+      component: mssql
+      workingDir: /opt/mssql-tools/bin/
+      commandLine: "./sqlcmd -U sa -P IloveOpenShift4 -d TimeDB -Q 'TRUNCATE TABLE TimeEntries;'"
+      group:
+        kind: run
