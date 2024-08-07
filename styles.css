@@ -20,8 +20,9 @@ body {
 .input-container input {
     padding: 5px;
     font-size: 16px;
-    width: 300px;
+    width: 800px;
 }
+
 
 .button-container {
     display: flex;

@@ -7,10 +7,15 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+ 
     <div class="container">
         <div class="input-container">
+            <label for="currentUrl">Current URL:</label>
+            <input type="text" id="currentUrl" readonly>
+        </div>
+        <div class="input-container">
             <label for="apiEndpoint">API Endpoint:</label>
-            <input type="text" id="apiEndpoint" value="http://localhost:8080">
+            <input type="text" id="apiEndpoint">
         </div>
         <div class="button-container">
             <div class="button-and-result">
@@ -22,6 +27,17 @@
                 <div id="historyResult"></div>
             </div>
         </div>
+        <script>
+            // Get the current URL
+            var currentUrl = window.location.href;
+            var newUrl = currentUrl.replace("javascript-app-https", "javascript-app-time-endpoint");
+
+    
+            // Display the URL in the paragraph with id "current-url"
+            document.getElementById('apiEndpoint').value = newUrl + "api/time";
+            document.getElementById('currentUrl').value = currentUrl;
+
+        </script>
     </div>
     <script src="app.js"></script>
 </body>
